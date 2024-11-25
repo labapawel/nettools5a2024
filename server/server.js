@@ -31,6 +31,15 @@ let corsConfig = {
 app.use(express.static('public/browser'));
 app.use(cors(corsConfig))
 
+
+app.get('/dig', (req, res)=>{
+  const { domena, rekord, serwerdns } = req.query;
+  let serwerdns1 = serwerdns ? "@"+serwerdns:'';
+  exec(`dig +short ${serwerdns1} ${domena} ${rekord}`, (error, stdout, stderr) => {
+    res.json({data:stdout, error, stderr});
+})
+
+});
 app.get('/whois', (req, res)=>{
     const { domena } = req.query;
     let regex = /^((?!-)[A-Za-z0-9-]{1,63}(?<!-)\.[A-Za-z]{2,}|((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)|([A-Fa-f0-9]{1,4}:){7}[A-Fa-f0-9]{1,4})$/gi
